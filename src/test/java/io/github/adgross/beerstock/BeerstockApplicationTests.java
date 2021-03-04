@@ -1,4 +1,4 @@
-package org.gross.beerstock;
+package io.github.adgross.beerstock;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
