@@ -22,10 +22,12 @@ public class BeerDto {
 
   private Long id;
 
+  @NotNull
   @NotEmpty
   @Size(min = 1, max = 200)
   private String name;
 
+  @NotNull
   @NotEmpty
   @Size(min = 1, max = 200)
   private String brand;
