@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/beers")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class BeerController {
+public class BeerController implements BeerControllerApi {
 
   private final BeerService beerService;
 
