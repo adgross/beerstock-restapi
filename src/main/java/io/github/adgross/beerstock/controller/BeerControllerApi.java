@@ -27,6 +27,13 @@ public interface BeerControllerApi {
   })
   BeerDto createBeer(BeerDto beerDto) throws BeerAlreadyRegisteredException;
 
+  @ApiOperation(value = "Return a beer by the given id")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Success beer found in the system"),
+      @ApiResponse(responseCode = "404", description = "Beer with given id not found.")
+  })
+  BeerDto findById(@PathVariable Long id) throws BeerNotFoundException;
+
   @ApiOperation(value = "Return a beer by the given name")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Success beer found in the system"),

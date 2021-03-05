@@ -34,7 +34,12 @@ public class BeerController implements BeerControllerApi {
     return beerService.createBeer(beerDto);
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/{id}")
+  public BeerDto findById(@PathVariable Long id) throws BeerNotFoundException {
+    return beerService.find(id);
+  }
+
+  @GetMapping("/name/{name}")
   public BeerDto findByName(@PathVariable String name) throws BeerNotFoundException {
     return beerService.find(name);
   }
