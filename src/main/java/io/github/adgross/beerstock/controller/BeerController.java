@@ -47,6 +47,12 @@ public class BeerController implements BeerControllerApi {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) throws BeerNotFoundException {
-    beerService.deleteById(id);
+    beerService.deleteBeer(id);
+  }
+
+  @DeleteMapping("/name/{name}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteByName(@PathVariable String name) throws BeerNotFoundException {
+    beerService.deleteBeer(name);
   }
 }

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
@@ -46,9 +47,15 @@ public class BeerService {
     }
   }
 
-  public void deleteById(Long id) throws BeerNotFoundException {
+  public void deleteBeer(Long id) throws BeerNotFoundException {
     find(id);
     beerRepository.deleteById(id);
+  }
+
+  @Transactional
+  public void deleteBeer(String name) throws BeerNotFoundException {
+    find(name);
+    beerRepository.deleteByName(name);
   }
 
   public BeerDto increment(Long id, int quantity)

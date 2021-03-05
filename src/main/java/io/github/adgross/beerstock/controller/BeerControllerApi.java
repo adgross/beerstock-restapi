@@ -47,4 +47,11 @@ public interface BeerControllerApi {
       @ApiResponse(responseCode = "404", description = "Beer with given id not found.")
   })
   void deleteById(@PathVariable Long id) throws BeerNotFoundException;
+
+  @ApiOperation(value = "Delete a beer by the given name")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Success beer deleted in the system"),
+      @ApiResponse(responseCode = "404", description = "Beer with given name not found.")
+  })
+  void deleteByName(@PathVariable String name) throws BeerNotFoundException;
 }
