@@ -34,13 +34,6 @@ public class BeerController implements BeerControllerApi {
     return beerService.listAll();
   }
 
-  @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public BeerDto createBeer(@RequestBody @Valid BeerDto beerDto)
-      throws BeerAlreadyRegisteredException {
-    return beerService.createBeer(beerDto);
-  }
-
   @GetMapping("/{id}")
   public BeerDto findById(@PathVariable Long id) throws BeerNotFoundException {
     return beerService.find(id);
@@ -49,6 +42,13 @@ public class BeerController implements BeerControllerApi {
   @GetMapping("/name/{name}")
   public BeerDto findByName(@PathVariable String name) throws BeerNotFoundException {
     return beerService.find(name);
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public BeerDto createBeer(@RequestBody @Valid BeerDto beerDto)
+      throws BeerAlreadyRegisteredException {
+    return beerService.createBeer(beerDto);
   }
 
   @DeleteMapping("/{id}")
