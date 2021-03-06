@@ -5,6 +5,7 @@ import io.github.adgross.beerstock.entity.Beer;
 import io.github.adgross.beerstock.exception.BeerAlreadyRegisteredException;
 import io.github.adgross.beerstock.exception.BeerNotFoundException;
 import io.github.adgross.beerstock.exception.BeerStockExceededException;
+import io.github.adgross.beerstock.exception.BeerStockNonExistentQuantityException;
 import io.github.adgross.beerstock.mapper.BeerMapper;
 import io.github.adgross.beerstock.repository.BeerRepository;
 import java.util.List;
@@ -56,6 +57,13 @@ public class BeerService {
   public void deleteBeer(String name) throws BeerNotFoundException {
     find(name);
     beerRepository.deleteByName(name);
+
+  public BeerDto updateBeer(Long id, BeerDto beerDto) throws BeerNotFoundException {
+    Beer beerOld = findBeer(id);
+    Beer beerNew = beerMapper.toModel(beerDto);
+    beerNew.setId(beerOld.getId());
+    Beer savedBeer = beerRepository.save(beerNew);
+    return beerMapper.toDto(savedBeer);
   }
 
   public BeerDto increment(Long id, int quantity)
@@ -66,7 +74,18 @@ public class BeerService {
       Beer incrementedBeer = beerRepository.save(beerToIncrement);
       return beerMapper.toDto(incrementedBeer);
     }
-    throw new BeerStockExceededException(id, quantity);
+    throw new BeerStockExceededException(id, quantity, beerToIncrement.getMax());
+  }
+
+  public BeerDto decrement(Long id, int quantity)
+      throws BeerStockNonExistentQuantityException, BeerNotFoundException {
+    Beer beerToDecrement = findBeer(id);
+    if (beerToDecrement.getQuantity() >= 0 + quantity) {
+      beerToDecrement.setQuantity(beerToDecrement.getQuantity() - quantity);
+      Beer decrementedBeer = beerRepository.save(beerToDecrement);
+      return beerMapper.toDto(decrementedBeer);
+    }
+    throw new BeerStockNonExistentQuantityException(id, quantity);
   }
 
   private Beer findBeer(Long id) throws BeerNotFoundException {

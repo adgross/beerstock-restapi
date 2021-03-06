@@ -3,6 +3,8 @@ package io.github.adgross.beerstock.controller;
 import io.github.adgross.beerstock.dto.BeerDto;
 import io.github.adgross.beerstock.exception.BeerAlreadyRegisteredException;
 import io.github.adgross.beerstock.exception.BeerNotFoundException;
+import io.github.adgross.beerstock.exception.BeerStockExceededException;
+import io.github.adgross.beerstock.exception.BeerStockNonExistentQuantityException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,4 +56,35 @@ public interface BeerControllerApi {
       @ApiResponse(responseCode = "404", description = "Beer with given name not found.")
   })
   void deleteByName(@PathVariable String name) throws BeerNotFoundException;
+
+  @ApiOperation(value = "Update a beer")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Beer updated"),
+      @ApiResponse(responseCode = "400",
+          description = "Missing required fields or out of range values"),
+      @ApiResponse(responseCode = "404", description = "Beer with given id not found")
+  })
+  public BeerDto updateBeer(@PathVariable Long id, BeerDto beerDto)
+      throws BeerNotFoundException;
+
+  @ApiOperation(value = "Increment the beer quantity in stock")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Beer quantity incremented"),
+      @ApiResponse(responseCode = "400",
+          description = "Increment value lead to invalid quantity"),
+      @ApiResponse(responseCode = "404", description = "Beer with given id not found")
+  })
+  public BeerDto increment(@PathVariable Long id, int quantity)
+      throws BeerStockExceededException, BeerNotFoundException;
+
+  @ApiOperation(value = "Decrement the beer quantity in stock")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Beer quantity decremented"),
+      @ApiResponse(responseCode = "400",
+          description = "Decrement value lead to invalid quantity"),
+      @ApiResponse(responseCode = "404", description = "Beer with given id not found")
+  })
+  public BeerDto decrement(@PathVariable Long id, int quantity)
+      throws BeerStockNonExistentQuantityException, BeerNotFoundException;
+
 }

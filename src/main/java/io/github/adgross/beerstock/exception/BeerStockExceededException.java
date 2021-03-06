@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BeerStockExceededException extends Exception {
 
-  public BeerStockExceededException(Long id, int quantityToIncrement) {
-    super(String.format("Adding %s beers to Beer ID(%s) exceed its stock capacity",
-        quantityToIncrement, id));
+  public BeerStockExceededException(Long id, int quantityToIncrement, int limit) {
+    super(String.format("Adding %s beers to Beer ID(%s) exceed its stock capacity limit(%s)",
+        quantityToIncrement, id, limit));
   }
 }
