@@ -48,15 +48,18 @@ public class BeerService {
     }
   }
 
-  public void deleteBeer(Long id) throws BeerNotFoundException {
-    find(id);
-    beerRepository.deleteById(id);
+  public void deleteBeer(Long id) {
+    if (isRegistered(id)) {
+      beerRepository.deleteById(id);
+    }
   }
 
   @Transactional
-  public void deleteBeer(String name) throws BeerNotFoundException {
-    find(name);
-    beerRepository.deleteByName(name);
+  public void deleteBeer(String name) {
+    if (isRegistered(name)) {
+      beerRepository.deleteByName(name);
+    }
+  }
 
   public BeerDto updateBeer(Long id, BeerDto beerDto) throws BeerNotFoundException {
     Beer beerOld = findBeer(id);
@@ -96,6 +99,10 @@ public class BeerService {
   private Beer findBeer(String name) throws BeerNotFoundException {
     return beerRepository.findByName(name)
         .orElseThrow(() -> new BeerNotFoundException(name));
+  }
+
+  private boolean isRegistered(Long id) {
+    return beerRepository.findById(id).isPresent();
   }
 
   private boolean isRegistered(String name) {
