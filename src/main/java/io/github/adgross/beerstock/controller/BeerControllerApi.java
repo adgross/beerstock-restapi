@@ -23,7 +23,7 @@ public interface BeerControllerApi {
 
   @ApiOperation(value = "Beer creation operation")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Success beer found in the system"),
+      @ApiResponse(responseCode = "201", description = "Beer created"),
       @ApiResponse(responseCode = "400",
           description = "Missing required fields or out of range values")
   })
@@ -31,15 +31,15 @@ public interface BeerControllerApi {
 
   @ApiOperation(value = "Return a beer by the given id")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Success beer found in the system"),
-      @ApiResponse(responseCode = "404", description = "Beer with given id not found.")
+      @ApiResponse(responseCode = "200", description = "Beer found"),
+      @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
   BeerDto findById(@PathVariable Long id) throws BeerNotFoundException;
 
   @ApiOperation(value = "Return a beer by the given name")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Success beer found in the system"),
-      @ApiResponse(responseCode = "404", description = "Beer with given name not found.")
+      @ApiResponse(responseCode = "200", description = "Beer found"),
+      @ApiResponse(responseCode = "404", description = "Beer with given name not found")
   })
   BeerDto findByName(@PathVariable String name) throws BeerNotFoundException;
 
