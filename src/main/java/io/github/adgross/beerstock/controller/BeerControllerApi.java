@@ -62,7 +62,7 @@ public interface BeerControllerApi {
           description = "Missing required fields or out of range values"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
-  public BeerDto updateBeer(@PathVariable Long id, BeerDto beerDto)
+  BeerDto updateBeer(@PathVariable Long id, BeerDto beerDto)
       throws BeerNotFoundException;
 
   @ApiOperation(value = "Increment the beer quantity in stock")
@@ -72,7 +72,7 @@ public interface BeerControllerApi {
           description = "Increment value lead to invalid quantity"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
-  public BeerDto increment(@PathVariable Long id, int quantity)
+  BeerDto increment(@PathVariable Long id, int quantity)
       throws BeerStockExceededException, BeerNotFoundException;
 
   @ApiOperation(value = "Decrement the beer quantity in stock")
@@ -82,7 +82,7 @@ public interface BeerControllerApi {
           description = "Decrement value lead to invalid quantity"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
-  public BeerDto decrement(@PathVariable Long id, int quantity)
+  BeerDto decrement(@PathVariable Long id, int quantity)
       throws BeerStockNonExistentQuantityException, BeerNotFoundException;
 
 }
