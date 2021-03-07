@@ -250,7 +250,7 @@ public class BeerControllerTests {
 
   void updateWithInvalidBeers(List<BeerDto> invalidBeers) throws Exception {
     for (var beer : invalidBeers) {
-      mockMvc.perform(put(BEER_API_URL_PATH_ID, ID_VALID)
+      mockMvc.perform(put(BEER_API_URL_PATH_ID, beer.getId())
           .contentType(MediaType.APPLICATION_JSON)
           .content(asJsonString(beer)))
           .andExpect(status().isBadRequest());
