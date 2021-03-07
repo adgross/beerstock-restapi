@@ -36,9 +36,44 @@ public class BeerControllerTests {
   private static final String NAME_VALID = "valid";
   private static final String NAME_INVALID = "invalid";
 
+  private final BeerDto validBeer = new BeerDto(
+      2L, "name", "brand", 400, 100, BeerType.FIRKANT);
 
-  private final BeerDto.BeerDtoBuilder beerDtoBuilder = new BeerDto(
-      1L, "name", "brand", 400, 100, BeerType.FIRKANT).toBuilder();
+  private List<BeerDto> getInvalidNameBeers() {
+    return List.of(
+        validBeer.toBuilder().name("").build(),
+        validBeer.toBuilder().name("a".repeat(201)).build(),
+        validBeer.toBuilder().name(null).build()
+    );
+  }
+
+  private List<BeerDto> getInvalidBrandBeers() {
+    return List.of(
+        validBeer.toBuilder().brand("").build(),
+        validBeer.toBuilder().brand("a".repeat(201)).build(),
+        validBeer.toBuilder().brand(null).build()
+    );
+  }
+
+  private List<BeerDto> getInvalidMaxBeers() {
+    return List.of(
+        validBeer.toBuilder().max(0).build(),
+        validBeer.toBuilder().max(501).build()
+    );
+  }
+
+  private List<BeerDto> getInvalidQuantityBeers() {
+    return List.of(
+        validBeer.toBuilder().quantity(-1).build(),
+        validBeer.toBuilder().quantity(101).build()
+    );
+  }
+
+  private List<BeerDto> getIncorrectBeers() {
+    return List.of(
+        validBeer.toBuilder().max(50).quantity(100).build()
+    );
+  }
 
   @MockBean
   private BeerService beerService;
@@ -78,8 +113,6 @@ public class BeerControllerTests {
 
   @Test
   void createWithValidBeer() throws Exception {
-    var validBeer = beerDtoBuilder.build();
-
     Mockito.when(beerService.createBeer(validBeer)).thenReturn(validBeer);
 
     mockMvc.perform(post(BEER_API_URL_PATH)
@@ -105,8 +138,6 @@ public class BeerControllerTests {
 
   @Test
   void createWithAlreadyRegisteredBeer() throws Exception {
-    var validBeer = beerDtoBuilder.build();
-
     Mockito.when(beerService.createBeer(validBeer))
         .thenThrow(BeerAlreadyRegisteredException.class);
 
@@ -115,54 +146,33 @@ public class BeerControllerTests {
 
   @Test
   void createWithInvalidName() throws Exception {
-    var invalidNameBeers = List.of(
-        beerDtoBuilder.name("").build(),
-        beerDtoBuilder.name("a".repeat(201)).build(),
-        beerDtoBuilder.name(null).build()
-    );
-
-    createWithInvalidBeers(invalidNameBeers);
+    createWithInvalidBeers(getInvalidNameBeers());
   }
 
   @Test
   void createWithInvalidBrand() throws Exception {
-    var invalidBrandBeers = List.of(
-        beerDtoBuilder.brand("").build(),
-        beerDtoBuilder.brand("a".repeat(201)).build(),
-        beerDtoBuilder.brand(null).build()
-    );
-
-    createWithInvalidBeers(invalidBrandBeers);
+    createWithInvalidBeers(getInvalidBrandBeers());
   }
 
   @Test
   void createWithOutOfRangeMax() throws Exception {
-    var invalidMaxBeers = List.of(
-        beerDtoBuilder.max(0).build(),
-        beerDtoBuilder.max(501).build()
-    );
-
-    createWithInvalidBeers(invalidMaxBeers);
+    createWithInvalidBeers(getInvalidMaxBeers());
   }
 
   @Test
   void createWithOutOfRangeQuantity() throws Exception {
-    var invalidQuantityBeers = List.of(
-        beerDtoBuilder.quantity(-1).build(),
-        beerDtoBuilder.quantity(101).build()
-    );
-
-    createWithInvalidBeers(invalidQuantityBeers);
+    createWithInvalidBeers(getInvalidQuantityBeers());
   }
 
   @Test
   void createWithQuantityBiggerThanMax() throws Exception {
-    var incorrectBeer = beerDtoBuilder.max(50).quantity(100).build();
+    var incorrectBeers = getIncorrectBeers();
+    for (var beer : incorrectBeers) {
+      Mockito.when(beerService.createBeer(beer))
+          .thenThrow(BeerStockExceededException.class);
+    }
 
-    Mockito.when(beerService.createBeer(incorrectBeer))
-        .thenThrow(BeerStockExceededException.class);
-
-    createWithInvalidBeers(List.of(incorrectBeer));
+    createWithInvalidBeers(incorrectBeers);
   }
 
   @Test
@@ -204,7 +214,6 @@ public class BeerControllerTests {
   @Test
   void updateWithValidBeer() throws Exception {
     Long idToUpdate = ID_VALID;
-    var validBeer = beerDtoBuilder.id(ID_INVALID).build();
     var updatedBeer = validBeer.toBuilder().id(idToUpdate).build();
 
     Mockito.when(beerService.updateBeer(idToUpdate, validBeer)).thenReturn(updatedBeer);
@@ -229,7 +238,6 @@ public class BeerControllerTests {
   @Test
   void updateWithUnregisteredId() throws Exception {
     Long idToUpdate = ID_INVALID;
-    var validBeer = beerDtoBuilder.build();
 
     Mockito.when(beerService.updateBeer(idToUpdate, validBeer))
         .thenThrow(BeerNotFoundException.class);
@@ -251,54 +259,33 @@ public class BeerControllerTests {
 
   @Test
   void updateWithInvalidName() throws Exception {
-    var invalidNameBeers = List.of(
-        beerDtoBuilder.name("").build(),
-        beerDtoBuilder.name("a".repeat(201)).build(),
-        beerDtoBuilder.name(null).build()
-    );
-
-    updateWithInvalidBeers(invalidNameBeers);
+    updateWithInvalidBeers(getInvalidNameBeers());
   }
 
   @Test
   void updateWithInvalidBrand() throws Exception {
-    var invalidBrandBeers = List.of(
-        beerDtoBuilder.brand("").build(),
-        beerDtoBuilder.brand("a".repeat(201)).build(),
-        beerDtoBuilder.brand(null).build()
-    );
-
-    updateWithInvalidBeers(invalidBrandBeers);
+    updateWithInvalidBeers(getInvalidBrandBeers());
   }
 
   @Test
   void updateWithOutOfRangeMax() throws Exception {
-    var invalidMaxBeers = List.of(
-        beerDtoBuilder.max(0).build(),
-        beerDtoBuilder.max(501).build()
-    );
-
-    updateWithInvalidBeers(invalidMaxBeers);
+    updateWithInvalidBeers(getInvalidMaxBeers());
   }
 
   @Test
   void updateWithOutOfRangeQuantity() throws Exception {
-    var invalidQuantityBeers = List.of(
-        beerDtoBuilder.quantity(-1).build(),
-        beerDtoBuilder.quantity(101).build()
-    );
-
-    updateWithInvalidBeers(invalidQuantityBeers);
+    updateWithInvalidBeers(getInvalidQuantityBeers());
   }
 
   @Test
   void updateWithQuantityBiggerThanMax() throws Exception {
-    var incorrectBeer = beerDtoBuilder.max(50).quantity(100).build();
+    var incorrectBeers = getIncorrectBeers();
+    for (var beer : incorrectBeers) {
+      Mockito.when(beerService.updateBeer(beer.getId(), beer))
+          .thenThrow(BeerStockExceededException.class);
+    }
 
-    Mockito.when(beerService.updateBeer(incorrectBeer.getId(), incorrectBeer))
-        .thenThrow(BeerStockExceededException.class);
-
-    updateWithInvalidBeers(List.of(incorrectBeer));
+    updateWithInvalidBeers(incorrectBeers);
   }
 
   @Test
