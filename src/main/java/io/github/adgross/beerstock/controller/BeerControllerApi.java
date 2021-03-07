@@ -27,7 +27,8 @@ public interface BeerControllerApi {
       @ApiResponse(responseCode = "400",
           description = "Missing required fields or out of range values")
   })
-  BeerDto createBeer(BeerDto beerDto) throws BeerAlreadyRegisteredException;
+  BeerDto createBeer(BeerDto beerDto)
+      throws BeerAlreadyRegisteredException, BeerStockExceededException;
 
   @ApiOperation(value = "Return a beer by the given id")
   @ApiResponses(value = {

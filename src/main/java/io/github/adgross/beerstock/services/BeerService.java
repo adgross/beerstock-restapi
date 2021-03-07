@@ -37,14 +37,17 @@ public class BeerService {
     return beerMapper.toDto(findBeer(id));
   }
 
-  public BeerDto createBeer(BeerDto beerDto) throws BeerAlreadyRegisteredException {
+  public BeerDto createBeer(BeerDto beerDto)
+      throws BeerAlreadyRegisteredException, BeerStockExceededException {
     String name = beerDto.getName();
-    if (!isRegistered(name)) {
+    if (isRegistered(name)) {
+      throw new BeerAlreadyRegisteredException(name);
+    } else if (beerDto.getQuantity() > beerDto.getMax()) {
+      throw new BeerStockExceededException(beerDto);
+    } else {
       Beer beer = beerMapper.toModel(beerDto);
       Beer savedBeer = beerRepository.save(beer);
       return beerMapper.toDto(savedBeer);
-    } else {
-      throw new BeerAlreadyRegisteredException(name);
     }
   }
 

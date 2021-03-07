@@ -47,7 +47,7 @@ public class BeerController implements BeerControllerApi {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public BeerDto createBeer(@RequestBody @Valid BeerDto beerDto)
-      throws BeerAlreadyRegisteredException {
+      throws BeerAlreadyRegisteredException, BeerStockExceededException {
     return beerService.createBeer(beerDto);
   }
 
