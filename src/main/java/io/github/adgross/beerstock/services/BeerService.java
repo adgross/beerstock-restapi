@@ -42,7 +42,7 @@ public class BeerService {
     String name = beerDto.getName();
     if (isRegistered(name)) {
       throw new BeerAlreadyRegisteredException(name);
-    } else if (beerDto.getQuantity() > beerDto.getMax()) {
+    } else if (isExceeded(beerDto)) {
       throw new BeerStockExceededException(beerDto);
     } else {
       Beer beer = beerMapper.toModel(beerDto);
@@ -64,12 +64,17 @@ public class BeerService {
     }
   }
 
-  public BeerDto updateBeer(Long id, BeerDto beerDto) throws BeerNotFoundException {
+  public BeerDto updateBeer(Long id, BeerDto beerDto)
+      throws BeerNotFoundException, BeerStockExceededException {
     Beer beerOld = findBeer(id);
-    Beer beerNew = beerMapper.toModel(beerDto);
-    beerNew.setId(beerOld.getId());
-    Beer savedBeer = beerRepository.save(beerNew);
-    return beerMapper.toDto(savedBeer);
+    if (isExceeded(beerDto)) {
+      throw new BeerStockExceededException(beerDto);
+    } else {
+      Beer beerNew = beerMapper.toModel(beerDto);
+      beerNew.setId(beerOld.getId());
+      Beer savedBeer = beerRepository.save(beerNew);
+      return beerMapper.toDto(savedBeer);
+    }
   }
 
   public BeerDto increment(Long id, int quantity)
@@ -102,6 +107,10 @@ public class BeerService {
   private Beer findBeer(String name) throws BeerNotFoundException {
     return beerRepository.findByName(name)
         .orElseThrow(() -> new BeerNotFoundException(name));
+  }
+
+  private boolean isExceeded(BeerDto beer) {
+    return beer.getQuantity() > beer.getMax();
   }
 
   private boolean isRegistered(Long id) {

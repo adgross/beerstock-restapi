@@ -295,7 +295,7 @@ public class BeerControllerTests {
   void updateWithQuantityBiggerThanMax() throws Exception {
     var incorrectBeer = beerDtoBuilder.max(50).quantity(100).build();
 
-    Mockito.when(beerService.createBeer(incorrectBeer))
+    Mockito.when(beerService.updateBeer(incorrectBeer.getId(), incorrectBeer))
         .thenThrow(BeerStockExceededException.class);
 
     updateWithInvalidBeers(List.of(incorrectBeer));

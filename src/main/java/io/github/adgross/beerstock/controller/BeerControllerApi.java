@@ -64,7 +64,7 @@ public interface BeerControllerApi {
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
   BeerDto updateBeer(@PathVariable Long id, BeerDto beerDto)
-      throws BeerNotFoundException;
+      throws BeerNotFoundException, BeerStockExceededException;
 
   @ApiOperation(value = "Increment the beer quantity in stock")
   @ApiResponses(value = {
