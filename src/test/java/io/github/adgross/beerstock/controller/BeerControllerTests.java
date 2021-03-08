@@ -127,17 +127,20 @@ public class BeerControllerTests {
   }
 
   @Test
-  void createWithValidBeer() throws Exception {
+  void createWithValidBeers() throws Exception {
     // id is managed by JPA, so we should ignore it
-    var beer = validBeer.toBuilder().id(ID_INVALID).build();
-    var newBeer = beer.toBuilder().id(ID_VALID).build();
-    Mockito.when(beerService.createBeer(validBeer)).thenReturn(newBeer);
+    for (var beer : getValidBeers()) {
+      beer.setId(ID_INVALID);
+      var newBeer = beer.toBuilder().id(ID_VALID).build();
 
-    mockMvc.perform(post(BEER_API_URL_PATH)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(validBeer)))
-        .andExpect(status().isCreated())
-        .andExpect(content().json(asJsonString(newBeer)));
+      Mockito.when(beerService.createBeer(beer)).thenReturn(newBeer);
+
+      mockMvc.perform(post(BEER_API_URL_PATH)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(asJsonString(beer)))
+          .andExpect(status().isCreated())
+          .andExpect(content().json(asJsonString(newBeer)));
+    }
   }
 
   void createWithInvalidBeers(List<BeerDto> invalidBeers) throws Exception {
@@ -225,17 +228,19 @@ public class BeerControllerTests {
   }
 
   @Test
-  void updateWithValidBeer() throws Exception {
-    Long idToUpdate = ID_VALID;
-    var updatedBeer = validBeer.toBuilder().id(idToUpdate).build();
+  void updateWithValidBeers() throws Exception {
+    for (var beer : getValidBeers()) {
+      Long idToUpdate = ID_VALID;
+      var updatedBeer = beer.toBuilder().id(idToUpdate).build();
 
-    Mockito.when(beerService.updateBeer(idToUpdate, validBeer)).thenReturn(updatedBeer);
+      Mockito.when(beerService.updateBeer(idToUpdate, beer)).thenReturn(updatedBeer);
 
-    mockMvc.perform(put(BEER_API_URL_PATH_ID, idToUpdate)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(validBeer)))
-        .andExpect(status().isOk())
-        .andExpect(content().json(asJsonString(updatedBeer)));
+      mockMvc.perform(put(BEER_API_URL_PATH_ID, idToUpdate)
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(asJsonString(beer)))
+          .andExpect(status().isOk())
+          .andExpect(content().json(asJsonString(updatedBeer)));
+    }
   }
 
   @Test
