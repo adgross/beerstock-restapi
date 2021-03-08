@@ -3,16 +3,19 @@ package io.github.adgross.beerstock.controller;
 import static io.github.adgross.beerstock.utils.JsonConvertUtils.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.github.adgross.beerstock.dto.BeerDto;
+import io.github.adgross.beerstock.dto.QuantityDto;
 import io.github.adgross.beerstock.enums.BeerType;
 import io.github.adgross.beerstock.exception.BeerAlreadyRegisteredException;
 import io.github.adgross.beerstock.exception.BeerNotFoundException;
 import io.github.adgross.beerstock.exception.BeerStockExceededException;
+import io.github.adgross.beerstock.exception.BeerStockNonExistentQuantityException;
 import io.github.adgross.beerstock.services.BeerService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -38,6 +41,8 @@ public class BeerControllerTests {
 
   private final BeerDto validBeer = new BeerDto(
       1L, "name", "brand", 400, 100, BeerType.FIRKANT);
+  private final QuantityDto validQuantity = new QuantityDto(10);
+  private final QuantityDto invalidQuantity = new QuantityDto(-1);
 
   @MockBean
   private BeerService beerService;
@@ -328,32 +333,96 @@ public class BeerControllerTests {
 
   @Test
   void incrementWithRegisteredIdAndValidQuantity() throws Exception {
+    var valueToIncrement = validQuantity;
+    var beer = validBeer.toBuilder().id(ID_INVALID).build();
+    var newValue = beer.getQuantity() + valueToIncrement.getQuantity();
+    var incrementedBeer = beer.toBuilder().id(ID_VALID).quantity(newValue).build();
 
+    Mockito.when(beerService.increment(ID_VALID, valueToIncrement.getQuantity()))
+        .thenReturn(incrementedBeer);
+
+    mockMvc.perform(patch(BEER_API_URL_PATH_INCREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(valueToIncrement)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(incrementedBeer)));
   }
 
   @Test
   void incrementWithRegisteredIdAndInvalidQuantity() throws Exception {
-
+    mockMvc.perform(patch(BEER_API_URL_PATH_INCREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(invalidQuantity)))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
   void incrementThatCauseExceedingQuantity() throws Exception {
+    Mockito.when(beerService.increment(ID_VALID, validQuantity.getQuantity()))
+        .thenThrow(BeerStockExceededException.class);
 
+    mockMvc.perform(patch(BEER_API_URL_PATH_INCREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(validQuantity)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void incrementWithUnregisteredId() throws Exception {
+    Mockito.when(beerService.increment(ID_INVALID, validQuantity.getQuantity()))
+        .thenThrow(BeerNotFoundException.class);
+
+    mockMvc.perform(patch(BEER_API_URL_PATH_INCREMENT, ID_INVALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(validQuantity)))
+        .andExpect(status().isNotFound());
   }
 
   @Test
   void decrementWithRegisteredIdAndValidQuantity() throws Exception {
+    var valueToDecrement = validQuantity;
+    var beer = validBeer.toBuilder().id(ID_INVALID).build();
+    var newValue = beer.getQuantity() + valueToDecrement.getQuantity();
+    var decrementedBeer = beer.toBuilder().id(ID_VALID).quantity(newValue).build();
 
+    Mockito.when(beerService.decrement(ID_VALID, valueToDecrement.getQuantity()))
+        .thenReturn(decrementedBeer);
+
+    mockMvc.perform(patch(BEER_API_URL_PATH_DECREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(valueToDecrement)))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(decrementedBeer)));
   }
 
   @Test
   void decrementWithRegisteredIdAndInvalidQuantity() throws Exception {
-
+    mockMvc.perform(patch(BEER_API_URL_PATH_DECREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(invalidQuantity)))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
   void decrementThatCauseNonExistentQuantity() throws Exception {
+    Mockito.when(beerService.decrement(ID_VALID, validQuantity.getQuantity()))
+        .thenThrow(BeerStockNonExistentQuantityException.class);
 
+    mockMvc.perform(patch(BEER_API_URL_PATH_DECREMENT, ID_VALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(validQuantity)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void decrementWithUnregisteredId() throws Exception {
+    Mockito.when(beerService.decrement(ID_INVALID, validQuantity.getQuantity()))
+        .thenThrow(BeerNotFoundException.class);
+
+    mockMvc.perform(patch(BEER_API_URL_PATH_DECREMENT, ID_INVALID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(validQuantity)))
+        .andExpect(status().isNotFound());
   }
 
 }
