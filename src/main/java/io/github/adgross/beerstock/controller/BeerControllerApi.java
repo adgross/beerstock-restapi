@@ -1,6 +1,7 @@
 package io.github.adgross.beerstock.controller;
 
 import io.github.adgross.beerstock.dto.BeerDto;
+import io.github.adgross.beerstock.dto.QuantityDto;
 import io.github.adgross.beerstock.exception.BeerAlreadyRegisteredException;
 import io.github.adgross.beerstock.exception.BeerNotFoundException;
 import io.github.adgross.beerstock.exception.BeerStockExceededException;
@@ -73,7 +74,7 @@ public interface BeerControllerApi {
           description = "Increment value lead to invalid quantity"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
-  BeerDto increment(@PathVariable Long id, int quantity)
+  BeerDto increment(@PathVariable Long id, QuantityDto quantity)
       throws BeerStockExceededException, BeerNotFoundException;
 
   @ApiOperation(value = "Decrement the beer quantity in stock")
@@ -83,7 +84,7 @@ public interface BeerControllerApi {
           description = "Decrement value lead to invalid quantity"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
-  BeerDto decrement(@PathVariable Long id, int quantity)
+  BeerDto decrement(@PathVariable Long id, QuantityDto quantity)
       throws BeerStockNonExistentQuantityException, BeerNotFoundException;
 
 }

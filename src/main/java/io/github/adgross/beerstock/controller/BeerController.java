@@ -1,6 +1,7 @@
 package io.github.adgross.beerstock.controller;
 
 import io.github.adgross.beerstock.dto.BeerDto;
+import io.github.adgross.beerstock.dto.QuantityDto;
 import io.github.adgross.beerstock.exception.BeerAlreadyRegisteredException;
 import io.github.adgross.beerstock.exception.BeerNotFoundException;
 import io.github.adgross.beerstock.exception.BeerStockExceededException;
@@ -70,14 +71,14 @@ public class BeerController implements BeerControllerApi {
   }
 
   @PatchMapping("/{id}/increment")
-  public BeerDto increment(@PathVariable Long id, int quantity)
+  public BeerDto increment(@PathVariable Long id, @RequestBody @Valid QuantityDto quantity)
       throws BeerStockExceededException, BeerNotFoundException {
-    return beerService.increment(id, quantity);
+    return beerService.increment(id, quantity.getQuantity());
   }
 
   @PatchMapping("/{id}/decrement")
-  public BeerDto decrement(@PathVariable Long id, int quantity)
+  public BeerDto decrement(@PathVariable Long id, @RequestBody @Valid QuantityDto quantity)
       throws BeerStockNonExistentQuantityException, BeerNotFoundException {
-    return beerService.decrement(id, quantity);
+    return beerService.decrement(id, quantity.getQuantity());
   }
 }
