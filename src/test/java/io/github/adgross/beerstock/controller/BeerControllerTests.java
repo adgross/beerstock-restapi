@@ -41,25 +41,31 @@ public class BeerControllerTests {
 
   private List<BeerDto> getValidBeers() {
     return List.of(
-        new BeerDto(1L, "a", "x", 400, 100, BeerType.CLASSIC),
-        new BeerDto(Long.MAX_VALUE, "b".repeat(199), "y", 100, 1, BeerType.CIRKEL),
-        new BeerDto(500L, "c", "z".repeat(199), 10, 0, BeerType.STORMEST)
+        new BeerDto(1L, "a", "áéíóúàèìòù ãẽĩõũâêîôûäëïöüçÇ", 400, 100, BeerType.CLASSIC),
+        new BeerDto(Long.MAX_VALUE, "x".repeat(199), "y".repeat(199), 100, 1, BeerType.CIRKEL),
+        new BeerDto(500L, "áéíóú àèìòùãẽĩõũâêîôûäëïöüçÇ", "e", 10, 0, BeerType.STORMEST)
     );
   }
 
   private List<BeerDto> getInvalidNameBeers() {
     return List.of(
         validBeer.toBuilder().name("").build(),
+        validBeer.toBuilder().name("   ").build(),
         validBeer.toBuilder().name("a".repeat(201)).build(),
-        validBeer.toBuilder().name(null).build()
+        validBeer.toBuilder().name(null).build(),
+        validBeer.toBuilder().name("a/bc").build(),
+        validBeer.toBuilder().name("a?)b").build()
     );
   }
 
   private List<BeerDto> getInvalidBrandBeers() {
     return List.of(
         validBeer.toBuilder().brand("").build(),
+        validBeer.toBuilder().brand("   ").build(),
         validBeer.toBuilder().brand("a".repeat(201)).build(),
-        validBeer.toBuilder().brand(null).build()
+        validBeer.toBuilder().brand(null).build(),
+        validBeer.toBuilder().brand("a/bc").build(),
+        validBeer.toBuilder().brand("a%b").build()
     );
   }
 
@@ -79,7 +85,8 @@ public class BeerControllerTests {
 
   private List<BeerDto> getIncorrectBeers() {
     return List.of(
-        validBeer.toBuilder().max(50).quantity(100).build()
+        validBeer.toBuilder().max(50).quantity(100).build(),
+        validBeer.toBuilder().max(10).quantity(11).build()
     );
   }
 
