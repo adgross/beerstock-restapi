@@ -15,7 +15,6 @@ import io.github.adgross.beerstock.exception.BeerNotFoundException;
 import io.github.adgross.beerstock.exception.BeerStockExceededException;
 import io.github.adgross.beerstock.services.BeerService;
 import java.util.List;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,12 @@ public class BeerControllerTests {
 
   private final BeerDto validBeer = new BeerDto(
       1L, "name", "brand", 400, 100, BeerType.FIRKANT);
+
+  @MockBean
+  private BeerService beerService;
+
+  @Autowired
+  private MockMvc mockMvc;
 
   private List<BeerDto> getValidBeers() {
     return List.of(
@@ -90,12 +95,6 @@ public class BeerControllerTests {
         validBeer.toBuilder().max(10).quantity(11).build()
     );
   }
-
-  @MockBean
-  private BeerService beerService;
-
-  @Autowired
-  private MockMvc mockMvc;
 
   @Test
   void listAllWithRegisteredBeers() throws Exception {

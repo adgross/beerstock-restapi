@@ -21,15 +21,6 @@ public interface BeerControllerApi {
   })
   List<BeerDto> listAll();
 
-  @ApiOperation(value = "Beer creation operation")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Beer created"),
-      @ApiResponse(responseCode = "400",
-          description = "Missing required fields or out of range values")
-  })
-  BeerDto createBeer(BeerDto beerDto)
-      throws BeerAlreadyRegisteredException, BeerStockExceededException;
-
   @ApiOperation(value = "Return a beer by the given id")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Beer found"),
@@ -43,6 +34,15 @@ public interface BeerControllerApi {
       @ApiResponse(responseCode = "404", description = "Beer with given name not found")
   })
   BeerDto findByName(@PathVariable String name) throws BeerNotFoundException;
+
+  @ApiOperation(value = "Beer creation operation")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Beer created"),
+      @ApiResponse(responseCode = "400",
+          description = "Missing required fields or out of range values")
+  })
+  BeerDto createBeer(BeerDto beerDto)
+      throws BeerAlreadyRegisteredException, BeerStockExceededException;
 
   @ApiOperation(value = "Delete a beer by the given id")
   @ApiResponses(value = {
