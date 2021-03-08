@@ -2,6 +2,7 @@ package io.github.adgross.beerstock.controller;
 
 import static io.github.adgross.beerstock.utils.JsonConvertUtils.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -98,32 +99,62 @@ public class BeerControllerTests {
 
   @Test
   void listAllWithRegisteredBeers() throws Exception {
+    List<BeerDto> beers = getValidBeers();
 
+    Mockito.when(beerService.listAll()).thenReturn(beers);
+
+    mockMvc.perform(get(BEER_API_URL_PATH))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(beers)));
   }
 
   @Test
   void listAllWithoutRegisteredBeers() throws Exception {
+    List<BeerDto> emptyList = List.of();
 
+    Mockito.when(beerService.listAll()).thenReturn(emptyList);
+
+    mockMvc.perform(get(BEER_API_URL_PATH))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(emptyList)));
   }
 
   @Test
   void findByIdWithRegisteredId() throws Exception {
+    var beer = validBeer.toBuilder().id(ID_VALID).build();
 
+    Mockito.when(beerService.find(ID_VALID)).thenReturn(beer);
+
+    mockMvc.perform(get(BEER_API_URL_PATH_ID, ID_VALID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(beer)));
   }
 
   @Test
   void findByIdWithUnregisteredId() throws Exception {
+    Mockito.when(beerService.find(ID_INVALID)).thenThrow(BeerNotFoundException.class);
 
+    mockMvc.perform(get(BEER_API_URL_PATH_ID, ID_INVALID))
+        .andExpect(status().isNotFound());
   }
 
   @Test
   void findByNameWithRegisteredName() throws Exception {
+    var beer = validBeer.toBuilder().name(NAME_VALID).build();
 
+    Mockito.when(beerService.find(NAME_VALID)).thenReturn(beer);
+
+    mockMvc.perform(get(BEER_API_URL_PATH_NAME, NAME_VALID))
+        .andExpect(status().isOk())
+        .andExpect(content().json(asJsonString(beer)));
   }
 
   @Test
   void findByNameWithUnregisteredName() throws Exception {
+    Mockito.when(beerService.find(NAME_INVALID)).thenThrow(BeerNotFoundException.class);
 
+    mockMvc.perform(get(BEER_API_URL_PATH_NAME, NAME_INVALID))
+        .andExpect(status().isNotFound());
   }
 
   @Test
