@@ -4,7 +4,7 @@ import static io.github.adgross.beerstock.utils.JsonConvertUtils.asJsonString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.github.adgross.beerstock.dto.BeerDto;
@@ -31,13 +31,21 @@ public class BeerControllerTests {
   private static final String BEER_API_URL_PATH_NAME = "/api/v1/beers/name/{name}";
   private static final String BEER_API_URL_PATH_INCREMENT = "/api/v1/beers/{id}/increment";
   private static final String BEER_API_URL_PATH_DECREMENT = "/api/v1/beers/{id}/decrement";
-  private static final Long ID_VALID = 1L;
+  private static final Long ID_VALID = Long.MAX_VALUE - 100;
   private static final Long ID_INVALID = 999L;
   private static final String NAME_VALID = "valid";
   private static final String NAME_INVALID = "invalid";
 
   private final BeerDto validBeer = new BeerDto(
-      2L, "name", "brand", 400, 100, BeerType.FIRKANT);
+      1L, "name", "brand", 400, 100, BeerType.FIRKANT);
+
+  private List<BeerDto> getValidBeers() {
+    return List.of(
+        new BeerDto(1L, "a", "x", 400, 100, BeerType.CLASSIC),
+        new BeerDto(Long.MAX_VALUE, "b".repeat(199), "y", 100, 1, BeerType.CIRKEL),
+        new BeerDto(500L, "c", "z".repeat(199), 10, 0, BeerType.STORMEST)
+    );
+  }
 
   private List<BeerDto> getInvalidNameBeers() {
     return List.of(
@@ -113,18 +121,16 @@ public class BeerControllerTests {
 
   @Test
   void createWithValidBeer() throws Exception {
-    Mockito.when(beerService.createBeer(validBeer)).thenReturn(validBeer);
+    // id is managed by JPA, so we should ignore it
+    var beer = validBeer.toBuilder().id(ID_INVALID).build();
+    var newBeer = beer.toBuilder().id(ID_VALID).build();
+    Mockito.when(beerService.createBeer(validBeer)).thenReturn(newBeer);
 
     mockMvc.perform(post(BEER_API_URL_PATH)
         .contentType(MediaType.APPLICATION_JSON)
         .content(asJsonString(validBeer)))
         .andExpect(status().isCreated())
-        // id is managed by JPA, so we should ignore it
-        .andExpect(jsonPath("$.name", Matchers.is(validBeer.getName())))
-        .andExpect(jsonPath("$.brand", Matchers.is(validBeer.getBrand())))
-        .andExpect(jsonPath("$.type", Matchers.is(validBeer.getType().toString())))
-        .andExpect(jsonPath("$.max", Matchers.is(validBeer.getMax())))
-        .andExpect(jsonPath("$.quantity", Matchers.is(validBeer.getQuantity())));
+        .andExpect(content().json(asJsonString(newBeer)));
   }
 
   void createWithInvalidBeers(List<BeerDto> invalidBeers) throws Exception {
@@ -222,17 +228,7 @@ public class BeerControllerTests {
         .contentType(MediaType.APPLICATION_JSON)
         .content(asJsonString(validBeer)))
         .andExpect(status().isOk())
-        /*
-        JSON path "$.id"
-        Expected: is <1L>
-             but: was <1>
-         */
-        .andExpect(jsonPath("$.id", Matchers.is((int) (long) idToUpdate)))
-        .andExpect(jsonPath("$.name", Matchers.is(validBeer.getName())))
-        .andExpect(jsonPath("$.brand", Matchers.is(validBeer.getBrand())))
-        .andExpect(jsonPath("$.type", Matchers.is(validBeer.getType().toString())))
-        .andExpect(jsonPath("$.max", Matchers.is(validBeer.getMax())))
-        .andExpect(jsonPath("$.quantity", Matchers.is(validBeer.getQuantity())));
+        .andExpect(content().json(asJsonString(updatedBeer)));
   }
 
   @Test
