@@ -40,10 +40,10 @@ public class BeerService {
   public BeerDto createBeer(BeerDto beerDto)
       throws BeerAlreadyRegisteredException, BeerStockExceededException {
     String name = beerDto.getName();
-    if (isRegistered(name)) {
-      throw new BeerAlreadyRegisteredException(name);
-    } else if (isExceeded(beerDto)) {
+    if (isExceeded(beerDto)) {
       throw new BeerStockExceededException(beerDto);
+    } else if (isRegistered(name)) {
+      throw new BeerAlreadyRegisteredException(name);
     } else {
       Beer beer = beerMapper.toModel(beerDto);
       Beer savedBeer = beerRepository.save(beer);
