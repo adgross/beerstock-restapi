@@ -10,5 +10,5 @@ public interface BeerRepository extends JpaRepository<Beer, Long> {
 
   Optional<Beer> findByName(String name);
 
-  Long deleteByName(String name);
+  void deleteByName(String name);
 }
