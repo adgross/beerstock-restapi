@@ -66,7 +66,7 @@ public class BeerController implements BeerControllerApi {
 
   @PutMapping("/{id}")
   public BeerDto updateBeer(Long id, @RequestBody @Valid BeerDto beerDto)
-      throws BeerNotFoundException, BeerStockExceededException {
+      throws BeerNotFoundException, BeerStockExceededException, BeerAlreadyRegisteredException {
     return beerService.updateBeer(id, beerDto);
   }
 

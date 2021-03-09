@@ -61,11 +61,11 @@ public interface BeerControllerApi {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Beer updated"),
       @ApiResponse(responseCode = "400",
-          description = "Missing required fields or out of range values"),
+          description = "Missing required fields, out of range values or name already exist"),
       @ApiResponse(responseCode = "404", description = "Beer with given id not found")
   })
   BeerDto updateBeer(@PathVariable Long id, BeerDto beerDto)
-      throws BeerNotFoundException, BeerStockExceededException;
+      throws BeerNotFoundException, BeerStockExceededException, BeerAlreadyRegisteredException;
 
   @ApiOperation(value = "Increment the beer quantity in stock")
   @ApiResponses(value = {

@@ -65,13 +65,19 @@ public class BeerService {
   }
 
   public BeerDto updateBeer(Long id, BeerDto beerDto)
-      throws BeerNotFoundException, BeerStockExceededException {
-    Beer beerOld = findBeer(id);
+      throws BeerNotFoundException, BeerStockExceededException, BeerAlreadyRegisteredException {
     if (isExceeded(beerDto)) {
       throw new BeerStockExceededException(beerDto);
     } else {
+      Beer beerOld = findBeer(id);
+
+      var possibleDuplicate = beerDto.getName();
+      if (!beerOld.getName().equals(possibleDuplicate) && isRegistered(possibleDuplicate)) {
+        throw new BeerAlreadyRegisteredException(possibleDuplicate);
+      }
+
       Beer beerNew = beerMapper.toModel(beerDto);
-      beerNew.setId(beerOld.getId());
+      beerNew.setId(id);
       Beer savedBeer = beerRepository.save(beerNew);
       return beerMapper.toDto(savedBeer);
     }

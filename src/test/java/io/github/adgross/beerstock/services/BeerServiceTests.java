@@ -231,6 +231,24 @@ public class BeerServiceTests {
   }
 
   @Test
+  void updateBeerWhenBeerNameAlreadyExist() {
+    var duplicateName = NAME_VALID;
+    var beer = validBeer.toBuilder().id(null).name(duplicateName).build();
+    var inputBeerDto = beerMapper.toDto(beer);
+    var inputId = ID_VALID;
+    var foundByIdBeer = validBeer.toBuilder().id(inputId).name(NAME_VALID + "old").build();
+    var sameNameBeer = validBeer.toBuilder().id(ID_VALID+1).name(duplicateName).build();
+
+    when(beerRepository.findById(inputId)).thenReturn(Optional.of(foundByIdBeer));
+    when(beerRepository.findByName(duplicateName)).thenReturn(Optional.of(sameNameBeer));
+
+    assertThrows(BeerAlreadyRegisteredException.class, () -> beerService.updateBeer(inputId, inputBeerDto));
+    verify(beerRepository, times(1)).findById(inputId);
+    verify(beerRepository, times(1)).findByName(duplicateName);
+    verify(beerRepository, never()).save(any(Beer.class));
+  }
+
+  @Test
   void incrementGivenRegisteredId() {
 
   }
