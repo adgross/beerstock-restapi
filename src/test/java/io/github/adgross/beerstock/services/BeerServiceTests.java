@@ -156,17 +156,12 @@ public class BeerServiceTests {
   }
 
   @Test
-  // the implementation might check (quantity <= max) first, and later (if already registered)
-  // we should use LENIENT here, so both implementations are valid
-  @MockitoSettings(strictness = Strictness.LENIENT)
   void createBeerGivenQuantityBiggerThanMax() {
     var beer = validBeer.toBuilder().name(NAME_VALID).max(10).quantity(50).build();
     var inputBeerDto = beerMapper.toDto(beer);
 
-    when(beerRepository.findByName(NAME_VALID)).thenReturn(Optional.empty());
-
     assertThrows(BeerStockExceededException.class, () -> beerService.createBeer(inputBeerDto));
-    verify(beerRepository, atMostOnce()).findByName(NAME_VALID);
+    verify(beerRepository, never()).findByName(NAME_VALID);
     verify(beerRepository, never()).save(any(Beer.class));
   }
 
