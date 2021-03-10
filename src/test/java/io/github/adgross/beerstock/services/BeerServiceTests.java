@@ -42,7 +42,7 @@ public class BeerServiceTests {
   private static final String NAME_VALID = "valid";
   private static final String NAME_INVALID = "invalid";
   private final Beer validBeer = new Beer(
-      1L, "name", "brand", 400, 100, BeerType.FIRKANT);
+      1L, "name", "brand", 400, 100, BeerType.LAGER);
   private final BeerMapper beerMapper = BeerMapper.INSTANCE;
 
   @Mock
@@ -54,8 +54,8 @@ public class BeerServiceTests {
   @Test
   void listAllWithRegisteredBeers() {
     List<Beer> listBeers = List.of(
-        new Beer(1L, "name1", "brand1", 100, 10, BeerType.FIRKANT),
-        new Beer(2L, "name2", "brand2", 50, 5, BeerType.CIRKEL)
+        new Beer(1L, "name1", "brand1", 100, 10, BeerType.VIENNA),
+        new Beer(2L, "name2", "brand2", 50, 5, BeerType.WEISS)
     );
     var expectedList = listBeers.stream()
         .map(beerMapper::toDto)

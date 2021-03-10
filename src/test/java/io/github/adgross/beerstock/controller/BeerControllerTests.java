@@ -40,7 +40,7 @@ public class BeerControllerTests {
   private static final String NAME_INVALID = "invalid";
 
   private final BeerDto validBeer = new BeerDto(
-      1L, "name", "brand", 400, 100, BeerType.FIRKANT);
+      1L, "name", "brand", 400, 100, BeerType.LAGER);
   private final QuantityDto validQuantity = new QuantityDto(10);
   private final QuantityDto invalidQuantity = new QuantityDto(-1);
 
@@ -52,9 +52,9 @@ public class BeerControllerTests {
 
   private List<BeerDto> getValidBeers() {
     return List.of(
-        new BeerDto(1L, "a", "áéíóúàèìòù ãẽĩõũâêîôûäëïöüçÇ", 400, 100, BeerType.CLASSIC),
-        new BeerDto(Long.MAX_VALUE, "x".repeat(199), "y".repeat(199), 100, 1, BeerType.CIRKEL),
-        new BeerDto(500L, "áéíóú àèìòùãẽĩõũâêîôûäëïöüçÇ", "e", 10, 0, BeerType.STORMEST)
+        new BeerDto(1L, "a", "áéíóúàèìòù ãẽĩõũâêîôûäëïöüçÇ", 400, 100, BeerType.PILSEN),
+        new BeerDto(Long.MAX_VALUE, "x".repeat(199), "y".repeat(199), 100, 1, BeerType.LAGER),
+        new BeerDto(500L, "áéíóú àèìòùãẽĩõũâêîôûäëïöüçÇ", "e", 10, 0, BeerType.ALE)
     );
   }
 

@@ -7,14 +7,16 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BeerType {
 
-  CLASSIC("Classic"),
-  CIRKEL("Cirkel"),
-  FIRKANT("Firkant"),
-  JAVA("Java"),
-  ORIGINAL("Original"),
-  KORN("Korn"),
-  STORMEST("Stormest"),
-  VAR("VAR");
+  LAGER("Lager"),
+  ALE("Ale"),
+  IPA("IPA"),
+  PILSEN("Pilsen"),
+  STOUT("Stout"),
+  VIENNA("Vienna"),
+  WEISS("Weiss"),
+  PORTER("Porter"),
+  WITBIER("Witbier"),
+  TRIPEL("Tripel");
 
   private final String description;
 }
