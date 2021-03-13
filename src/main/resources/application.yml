@@ -23,5 +23,5 @@ api:
     contactName: "Ádler Jonas Gross"
     contactGithub: "https://github.com/adgross"
     contactEmail: "adlerjgross@gmail.com"
-    license: "Apache 2.0"
-    licenseUrl: "https://www.apache.org/licenses/LICENSE-2.0.html"
+    license: "MIT"
+    licenseUrl: "https://mit-license.org/"
