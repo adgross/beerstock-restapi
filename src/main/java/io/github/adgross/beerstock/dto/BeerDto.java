@@ -26,12 +26,12 @@ public class BeerDto {
 
   @NotBlank
   @Size(min = 1, max = 200)
-  @Pattern(regexp = "^[A-Za-z0-9áéíóúàèìòùãẽĩõũâêîôûäëïöüçÇ\s]*$")
+  @Pattern(regexp = "^[A-Za-z0-9áéíóúàèìòùãẽĩõũâêîôûäëïöüçÇ\\s]*$")
   private String name;
 
   @NotBlank
   @Size(min = 1, max = 200)
-  @Pattern(regexp = "^[A-Za-z0-9áéíóúàèìòùãẽĩõũâêîôûäëïöüçÇ\s]*$")
+  @Pattern(regexp = "^[A-Za-z0-9áéíóúàèìòùãẽĩõũâêîôûäëïöüçÇ\\s]*$")
   private String brand;
 
   @NotNull
