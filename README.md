@@ -2,12 +2,12 @@
 
 This project aim to create a beer stock back-end server using REST architecture.
 
-- Targets Java 15.  
+- Targets Java 11.  
 - Build with Gradle.
 
 ### Dependencies
 
-Make sure you have `JDK 15` and `Gradle` installed.
+Make sure you have `JDK 11` and `Gradle` installed.
 
 This project don't include a gradle wrapper. If you want to build with system
 installed gradle, skip the gradle wrapper generation and build with
